@@ -1,0 +1,23 @@
+/* .appartment{
+    border: 3px solid red;
+} */
+
+.like-btn{
+    font-size: xx-large;
+    cursor: pointer;
+    user-select: none;
+    color: red;
+}
+
+.material-symbols-outlined {
+    color: red;
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 100,
+  'GRAD' 200,
+  'opsz' 48
+}
+
+a{
+    display: block;
+}
