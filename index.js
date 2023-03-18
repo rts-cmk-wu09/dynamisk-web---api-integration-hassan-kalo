@@ -1,111 +1,66 @@
-/* 
-Pokemon api - ekstraopgave 2 - mulighed for at søge
+import { createHTMLTag, searchHandler } from './functions.js';
 
-Tilføj et søgefelt til index siden, så man ikke skal bladre hen til sin favorit-pokemon. Det kan være du skal bruge et url-parameter til at få fat i søgeresultatet..? 
-*/
+export let allDataArr, dataCount, currentPage = 1, offSet = 0, limit = 20
+const wrapper = createHTMLTag({ tag: 'div', className: ['wrapper'], parent: document.body });
+export const searchInput = createHTMLTag({ tag: 'input', className: ['search-input'], type: 'search', event: 'keyup', func: searchHandler, parent: wrapper })
+export const nextPrevContainer = createHTMLTag({ tag: 'div', className: ['nextPrevContainer'], parent: wrapper })
+export const digitsContainer = createHTMLTag({ tag: 'div', className: ['digitsContainer'], parent: wrapper })
+const prevButton = createHTMLTag({ tag: 'button', className: ['prevBtn'], id: 'prevBtn', text: "❮", event: 'click', func: pagination, parent: nextPrevContainer })
+const nextButton = createHTMLTag({ tag: 'button', className: ['nextBtn'], id: 'nextBtn', text: "❯", event: 'click', func: pagination, parent: nextPrevContainer })
+export const listContainer = createHTMLTag({ tag: 'div', className: ['listContainer'], parent: wrapper })
+export const pageNumDiv = createHTMLTag({ tag: 'div', className: ['pageNumDiv'], parent: wrapper })
 
-const wrapper = document.createElement("div");
-wrapper.classList.add("wrapper");
-document.body.append(wrapper);
-const listContainer = document.createElement("div");
-listContainer.classList = "listContainer";
-
-const nextPrevContainer = document.createElement("div");
-const nextBtn = document.createElement("button");
-const prevBtn = document.createElement("button");
-const aPrev = document.createElement("a");
-const aNext = document.createElement("a");
-aPrev.innerText = "❮";
-aNext.innerText = "❯";
-prevBtn.append(aPrev);
-nextBtn.append(aNext);
-nextPrevContainer.append(prevBtn, nextBtn);
-const pageDiv = document.createElement('div')
-wrapper.append(nextPrevContainer, listContainer,pageDiv);
-prevBtn.addEventListener("click", prevBtnHandler);
-nextBtn.addEventListener("click", nextBtnHandler);
-
-let dataNext;
-let dataPrev;
-let totalNumOfpages
-let currentPage
-fetch("https://pokeapi.co/api/v2/pokemon")
-  .then((response) => response.json())
-  .then((data) => {
-    totalNumOfpages = data.count
-    currentPage = 1
-    console.log(data);
-    data.results.forEach((element) => {
-      const a = document.createElement("a");
-      a.innerText = element.name;
-      a.href = "destination.html?name=" + element.name;
-      a.dataset.api = element.url;
-      listContainer.append(a);
-
-      dataNext = data.next;
-      dataPrev = data.previous;
-    });
-    
-    pageDiv.innerText = currentPage + ' ud af 65'
-  })
-  .catch((error) => console.error(error));
-//offset=20  20انطلق من
-// href="https://pokeapi.co/api/v2/pokemon?offset=20&limit=20"
-
-function nextBtnHandler() {
-  
-
-  // `https://pokeapi.co/api/v2/pokemon?offset=${x}&limit=20`
-  if(dataNext==null){
-    console.log('last page')
-  }else{
-    currentPage++
-    pageDiv.innerText = currentPage  + ' ud af 65'
-    //pageDiv.innerText = currentPage
-    fetch(dataNext)
+fetch(`https://pokeapi.co/api/v2/pokemon?limit=1281`)
     .then((response) => response.json())
     .then((data) => {
-      dataNext = data.next;
-      dataPrev = data.previous;
-      console.log(data);
-      listContainer.innerHTML = "";
-      data.results.forEach((element) => {
-        const a = document.createElement("a");
-        a.innerText = element.name;
-        a.href = "destination.html?name=" + element.name;
-        a.dataset.api = element.url;
-        listContainer.append(a);
-      });
+        allDataArr = data.results;
+        dataCount = data.count;
+        pageNumDiv.innerText = currentPage;
+        for (let i = offSet; i < offSet + limit; i++) {
+            const a = createHTMLTag({ tag: 'a', href: '#', text: allDataArr[i].name });
+            listContainer.append(a);
+        }
+        offSet = offSet + limit;
+        for (let i = 0; i < Math.ceil(dataCount / limit); i++) {
+            const btn = createHTMLTag({ tag: 'button', text: i + 1, className: [`pageNumBtn`, `pageNumBtn${i + 1}`] });
+            digitsContainer.append(btn);
+            btn.addEventListener("click", pagination);
+        }
     });
-  }
-  
+
+// return exits the function. break exits the switch
+function pagination(e) {
+    switch (e.target.id) {
+        case 'nextBtn':
+            if (currentPage >= Math.ceil(allDataArr.length / limit)) {
+                alert('last page');
+                return;
+            }
+            currentPage++;
+            offSet += limit;
+            break;
+        case 'prevBtn':
+            if (currentPage <= 1) {
+                alert('first page');
+                return;
+            }
+            currentPage--;
+            offSet -= limit;
+            break;
+        default:
+            currentPage = parseInt(e.target.innerText);
+            offSet = (currentPage - 1) * limit;
+            break;
+    }
+
+    listContainer.innerHTML = '';
+    pageNumDiv.innerText = currentPage;
+    document.querySelectorAll('.pageNumBtn').forEach((element) => (element.style.color = 'black'));
+    document.querySelector(`.pageNumBtn${currentPage}`).style.color = 'red';
+
+    for (const data of allDataArr.slice(offSet, offSet + limit)) {
+        const a = createHTMLTag({ tag: 'a', href: '#', text: data.name });
+        listContainer.append(a);
+    }
 }
 
-function prevBtnHandler() {
-  
-  if (dataPrev == null) {
-    console.log("first pageeeeeeeeè");
-  } else {
-    currentPage--
-    pageDiv.innerText = currentPage + ' ud af 65'
-    fetch(dataPrev)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("data.next");
-
-        console.log(data);
-        console.log(data.results);
-
-        dataNext = data.next;
-      dataPrev = data.previous;
-        listContainer.innerHTML = "";
-        data.results.forEach((element) => {
-          const a = document.createElement("a");
-          a.innerText = element.name;
-          a.href = "destination.html?name=" + element.name;
-          a.dataset.api = element.url;
-          listContainer.append(a);
-        });
-      });
-  }
-}

@@ -21,3 +21,19 @@
 a{
     display: block;
 }
+
+.turningPageBtn, .numBtns{
+    cursor: pointer;
+    user-select: none;
+}
+.pageNumBtn1{
+    color: red;
+}
+
+.digitsContainer{
+    white-space: nowrap;
+    overflow-x: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    
+}
