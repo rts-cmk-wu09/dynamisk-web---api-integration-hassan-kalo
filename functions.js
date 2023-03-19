@@ -1,6 +1,6 @@
 import { allDataArr, searchInput, listContainer, digitsContainer, pageNumDiv, nextPrevContainer } from './index.js';
 
-export function createHTMLTag(options) {
+export function createHTMLTag(options,styles) {
     const x = document.createElement(options.tag);
     if (options.className) { x.classList.add(...options.className) }
     if (options.text) { x.innerText = options.text; }
@@ -9,6 +9,11 @@ export function createHTMLTag(options) {
     if (options.href) { x.href = options.href; }
     if(options.event){x.addEventListener(options.event,options.func)}
     if (options.parent) { options.parent.append(x); }
+    if (styles) { 
+        for (const [key, value] of Object.entries(styles)) {
+            x.style[key] = value;
+        }
+    }
     return x;
 }
 
