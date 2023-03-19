@@ -24,7 +24,7 @@ export const pageNumDiv = createHTMLTag({ tag: 'div', className: ['pageNumDiv'],
 if (localStorage.getItem('allDataArr')) {
     // If the data is saved locally, use it
     allDataArr = JSON.parse(localStorage.getItem('allDataArr'));
-    dataCount = localStorage.getItem('dataCount');
+    dataCount = parseInt(localStorage.getItem('dataCount'));
     pagination();
 } else {
     // If the data is not saved locally, fetch it
@@ -53,10 +53,14 @@ function pagination(e) {
             navBtnsArr.push(btn)
         }
         for (let i = offSet; i < offSet + limit; i++) {
-            const a = createHTMLTag({ tag: 'a', href: '#', text: allDataArr[i].name }, {
-                display: 'block'
-            });
-            listContainer.append(a);
+            if(allDataArr[i]){
+                const a = createHTMLTag({ tag: 'a', href: '#', text: allDataArr[i].name }, {
+                    display: 'block'
+                });
+                listContainer.append(a);
+            }else{
+                break
+            }
         }
         pageNumDiv.innerText = currentPage;
         navBtnsArr[currentPage - 1].style.color = 'green'
