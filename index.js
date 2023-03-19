@@ -54,7 +54,7 @@ function pagination(e) {
         }
         for (let i = offSet; i < offSet + limit; i++) {
             if(allDataArr[i]){
-                const a = createHTMLTag({ tag: 'a', href: '#', text: allDataArr[i].name }, {
+                const a = createHTMLTag({ tag: 'a', href: `details.html?name=${allDataArr[i].name}`, text: allDataArr[i].name }, {
                     display: 'block'
                 });
                 listContainer.append(a);
@@ -101,7 +101,7 @@ function pagination(e) {
         navBtnsArr[currentPage - 1].style.color = 'green'
     
         for (const data of allDataArr.slice(offSet, offSet + limit)) {
-            const a = createHTMLTag({ tag: 'a', href: '#', text: data.name }, {
+            const a = createHTMLTag({ tag: 'a', href: `details.html?name=${data.name}`, text: data.name }, {
                 display: 'block'
             });
             listContainer.append(a);
